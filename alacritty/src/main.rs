@@ -64,6 +64,12 @@ use crate::event::{Event, Processor};
 #[cfg(target_os = "macos")]
 use crate::macos::locale;
 
+
+use tikv_jemallocator;
+
+#[global_allocator]
+static ALLOC: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
+
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
     panic::attach_handler();

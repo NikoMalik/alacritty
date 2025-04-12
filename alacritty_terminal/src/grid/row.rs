@@ -62,7 +62,30 @@ impl<T: Default> Row<T> {
             return;
         }
 
+        let mut cap=self.inner.capacity();
+        //so this function gets called when shrinking too, apparently
+        //or, it's a race condition due to the Copy trait, yey! ie. the Copy trait strikes again?!
+        //eg. cap=142, columns=91
+        if columns < cap {
+            //dbg!("Avoiding crash:",columns,cap);
+            //self.inner.shrink_to_fit(); //has no effect?
+            self.inner.shrink_to(columns);
+            //dbg!("After shrink:",self.inner.capacity()); //this is equal to columns
+                                                         //always,apparently! so commenting out
+                                                         //dbg!()s.
+        } else {
+            self.inner.reserve_exact(columns - cap);
+        }
+
+
         self.inner.resize_with(columns, T::default);
+        cap=self.inner.capacity();
+        if columns != cap {
+            dbg!("Wanted3:", columns, cap);
+            //even with the above, this still triggers sometimes, like columns=46 cap=84, or
+            //columns=88 and cap=168
+        }
+
     }
 
     /// Reduce the number of columns in the row.
@@ -80,6 +103,14 @@ impl<T: Default> Row<T> {
         let mut new_row = self.inner.split_off(columns);
         let index = new_row.iter().rposition(|c| !c.is_empty()).map_or(0, |i| i + 1);
         new_row.truncate(index);
+
+        // Reduce the capacity of the left part.
+        // self.inner.shrink_to_fit();
+        self.inner.shrink_to(columns);
+        let cap=self.inner.capacity();
+        if columns != cap {
+            dbg!("Wanted4:",columns,cap);
+        }
 
         self.occ = min(self.occ, columns);
 
