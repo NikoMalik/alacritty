@@ -41,7 +41,9 @@ serde_yaml = "0.9.25"
 smallvec = { version = "1.13.1", features = ["serde"] }
 tempfile = "3.12.0"
 toml = "0.8.2"
-tikv-jemallocator = "0.6"
+# tikv-jemallocator = "0.6"
+tcmalloc-better = "0.1.14"
+
 toml_edit = "0.22.21"
 unicode-width = "0.1"
 winit = { version = "0.30.9", default-features = false, features = ["rwh_06", "serde"] }

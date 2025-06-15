@@ -64,11 +64,10 @@ use crate::event::{Event, Processor};
 #[cfg(target_os = "macos")]
 use crate::macos::locale;
 
-use tikv_jemallocator;
+use tcmalloc_better::TCMalloc;
 
 #[global_allocator]
-
-static ALLOC: tikv_jemallocator::Jemalloc = tikv_jemallocator::Jemalloc;
+static ALLOC: TCMalloc = TCMalloc;
 
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
@@ -84,6 +83,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Load command line options.
     let options = Options::new();
+
+    TCMalloc::process_background_actions_thread();
 
     match options.subcommands {
         #[cfg(unix)]
