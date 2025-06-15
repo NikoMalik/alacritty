@@ -67,7 +67,10 @@ use crate::macos::locale;
 use tcmalloc_better::TCMalloc;
 
 #[global_allocator]
-static ALLOC: TCMalloc = TCMalloc;
+static GLOBAL: TCMalloc = TCMalloc;
+
+// #[global_allocator]
+// static ALLOC: TCMalloc = TCMalloc;
 
 fn main() -> Result<(), Box<dyn Error>> {
     #[cfg(windows)]
